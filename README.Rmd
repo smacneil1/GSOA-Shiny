@@ -1,0 +1,50 @@
+---
+output:
+  html_document:
+    keep_md: yes
+---
+
+# GSOA-Shiny
+
+[GSOA-Shiny](https://smacneil.shinyapps.io/GSOA/)
+is a web application that provides 
+a graphical user interface to the multi-omic gene set enrichment analysis package for R,
+called [GSOA](https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-015-0189-4).
+For details about using the GSOA package directly in R or python,
+see [The GSOA Bitbucket](https://bitbucket.org/srp33/gsoa).
+
+## Citation
+
+GSOA is provided under a free-of-charge, open-source license (???).
+All we require is that you cite/attribute the following
+in any work that benefits from this code or application.
+
+MacNeil and Piccolo (2015) [Inferring pathway dysregulation in cancers from multiple types of omic data](https://genomemedicine.biomedcentral.com/articles/10.1186/s13073-015-0189-4).
+
+Genome Medicine, 7:61.
+DOI: 10.1186/s13073-015-0189-4
+
+## Instructuons for use
+
+1) Navigate to [GSOA-Shiny](https://smacneil.shinyapps.io/GSOA/)
+
+2) See the 
+[Shiny-GSOA 'instructions for use'](https://smacneil.shinyapps.io/GSOA/),
+for detailed instructions.
+
+## Launching GSOA-Shiny Locally in R
+
+Make sure that you first have installed
+[the latest version of R](http://cran.r-project.org/).
+
+[Clone](https://github.com/smacneil1/GSOA-Shiny) the GSOA-Shiny GitHub Repo, and launch locally 
+
+Install missing/old packages
+
+Running these commands in Rstudio also runs Shiny locally 
+
+```{r, eval=FALSE}
+install.packages("shiny") 
+shiny::runGitHub("GSOA-Shiny","smacneil")
+```
+
