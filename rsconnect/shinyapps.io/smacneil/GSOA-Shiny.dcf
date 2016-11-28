@@ -1,0 +1,10 @@
+name: GSOA-Shiny
+title:
+account: smacneil
+server: shinyapps.io
+appId: 137964
+bundleId: 616430
+url: https://smacneil.shinyapps.io/GSOA-Shiny/
+when: 1479317850.22719
+asMultiple: FALSE
+asStatic: FALSE

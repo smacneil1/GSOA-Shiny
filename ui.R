@@ -1,77 +1,277 @@
-library(shiny)
+#devtools::install_github("daattali/shinyjs")
+library(shinyBS) 
 library(shinythemes)
-require(markdown)
+library(shiny)
+library(shinyjs)
 
-shinyUI(fluidPage(navbarPage( "Gene Set Omic Analysis (GSOA)",
-id = "page-nav", 
-theme = shinytheme("cerulean"), collapsable = TRUE,#theme = shinytheme("united"),
+options(shiny.deprecation.messages=FALSE)
 
-# "Run GSOA" Page
-tabPanel("Run GSOA",
-         #column(12, wellPanel(
-           h2('Gene Set Omic Analysis (GSOA)', align="center"),
-           h5("GSOA identifies gene sets that differ between two phenotypes by integrating evidence from multi-omic data using machine learning algorithms", style="color:black"),
-           h5('Please load your data files and specify GSOA parameters. See "Instructions for Use" section for file and parameter details',align= "left"),
-           h5('To run GSOA with', a(href = 'https://drive.google.com/open?id=0B-HGhGW-uF4AODNhMnVHSmUwdHM', 'Demo Files', target="_blank"), 'download all 3 files from drive,', 'and upload.', style="color:black"),
+shinyUI(fluidPage(tagList(
+  useShinyjs(),
+  navbarPage(
+    "Gene Set Omic Analysis (GSOA)",
+    id = "page-nav",
+    theme = shinytheme("yeti"),
+    collapsable = TRUE,
 
-sidebarLayout(
-  sidebarPanel(
-    fluidRow(
+    tabPanel("Run GSOA",
+      br(),
+      br(),
+      HTML('<center><img src="./GSOA_Logo_Code2.png"></center>'),
+      br(),
+      HTML('<center><h4> GSOA identifies gene sets that differ between two phenotypes by integrating evidence from multi-omic data</h4></center>'),
+      
+      # Column 1
+      div(id = "inputs",
+          column(
+            4,
+            offset = 2,
+            br(),
+            #div(style="height: 100px;",fileInput('dataFile', label = h5("Gene Expression Data ", tags$style(type = "text/css", "#q1 {vertical-align: bottom;}"),
+            #bsButton("q1", label = "", icon = icon("question"), size = "extra-small")),
+            #width="85%", accept = c( 'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain', '.csv', '.tsv'))),
+            #bsPopover(id = "q1", title = "Tidy data", content = paste0("You should read the ",  a("tidy data paper", href = "http://vita.had.co.nz/papers/tidy-data.pdf",target="_blank")), placement = "right", trigger = "click", options = list(container = "body")),
+            div(
+              style = "height: 85px;",
+              fileInput(
+                'dataFile',
+                'Genomic Data File *required',
+                multiple = T,
+                width = "85%",
+                accept = c(
+                  'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain','.csv','.tsv'
+                ))),
+            
+            div(
+              style = "height: 85px;",
+              fileInput(
+                'classFile',
+                'Sample Class File *required',
+                width = "85%",
+                accept = c(
+                  'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain','.csv','.tsv'
+                ))),
+            
+            div(
+              style = "height: 85px;",
+              fileInput(
+                'gmtFile',
+                'Gene Sets  (GMT file) *required',
+                width = "85%",
+                accept = c(
+                  'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain','.csv','.tsv'
+                ))),
+            
+            #hidden things
+            a(id = "toggleAdvanced", "Show/hide multi-omic data inputs"),
+            hidden(div(
+              id = "advanced",
+              div(
+                style = "height: 85px;",
+                fileInput(
+                  'dataFile2',
+                  'DNA Sequencing Data.',
+                  width = "85%",
+                  accept = c(
+                    'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain','.csv','.tsv'
+                  ))),
+              
+              div(
+                style = "height: 85px;",
+                fileInput(
+                  'dataFile3',
+                  'Copy Number Variation Data.',
+                  width = "85%",
+                  accept = c(
+                    'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain','.csv','.tsv'
+                  ))),
+              
+              div(
+                style = "height: 85px;",
+                fileInput(
+                  'dataFile4',
+                  'Other Genomic Data.',
+                  width = "85%",
+                  accept = c(
+                    'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain','.csv','.tsv'
+                  ))),
+              
+              div(
+                style = "height: 85px;",
+                fileInput(
+                  'dataFile5',
+                  'Other Genomic Data.',
+                  width = "85%",
+                  accept = c(
+                    'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain','.csv','.tsv'
+                  )))
+            )),
+          
+            div(
+              style = "height: 30px;",
+              checkboxInput("checkbox", label = "Include Hallmark Analysis", value = FALSE)
+            ),
+            bsPopover(
+              id = "checkbox",
+              title = "Select if you want to run the Hallmark Genesets",
+              content = "www.shelleymacneil.com" ,
+              placement = "right",
+              trigger = "hover"
+            )
+            
+
+            
+            )),
+      
+      ##################
+      # Column 2
+      ##################
+      
+      column(
+        4,
+        offset = 1,
+        br(),
+        div(
+          style = "height: 85px;",
+          numericInput(
+            "Variance",
+            "% Variance to Filter",
+            value = 10,
+            width = "70%",
+            min = 1,
+            max = 90
+          )),
+        
+        div(
+          style = "height: 85px;",
+          numericInput(
+            "LowExpression",
+            "% Low Gene Expression to Filter",
+            value = 10,
+            width = "70%",
+            min = 1,
+            max = 90
+          )),
+        
+        div(
+          style = "height: 65px;",
+          textInput(
+            'results_h',
+            value = "shelley@utah.edu ",
+            width = "70%",
+            label = 'E-mail Address'
+          )),
+        
+        br(),
+      
+        # more hidden stuff  
+        a(id = "toggleAdvanced2", "Show/hide additional paramters"),
+        
+        hidden(div(
+          id = "advanced2",
+           div(
+            style = "height: 85px;",
+            selectInput(
+              'Algorithm',
+              label = 'Machine Learning Algorithm.',
+              choices = c("svm", "rf"),
+              width = "70%"
+            )),
+          
+          div(
+          style = "height: 85px;",
+          numericInput(
+            "CrossValidation",
+            "# of Cross Validations",
+            value = 5,
+            min = 1,
+            width = "70%",
+            max = 5
+          )),
+        
+        div(
+          style = "height: 85px;",
+          numericInput(
+            'Iterations',
+            label = 'Number of Iterations.',
+            value = 10,
+            min = 1,
+            width = "70%",
+            max = 1000
+          ))
+        )),
+        
+        br(),
+        br(),
+
+        actionButton(
+          "run",
+          "Run",
+          width = "60%",
+          icon("paper-plane"),
+          style = "color: black; background-color:green;  border-color: grey; padding:9px"
+        ),
+        bsTooltip(
+          id = "run",
+          title = "Click run once files are uploaded",
+          placement = "right",
+          trigger = "hover"
+        ),
+        
+        br(),
+        br(),
+        actionButton(
+          "refresh",
+          "Refresh Inputs",
+          width = "60%",
+          icon("paper-plane"),
+          style = "color: black; background-color:  grey;  border-color: grey; padding:9px"
+        )
+        
+        ),
+      
+      
+      
+      
+      # Rendered Objects
+      column(12,
+        br(),
+        br(),
+        #HTML('<h4> File Validation </h4>'),
+        #verbatimTextOutput("path"),
+        #verbatimTextOutput("path")),
+        #allows for message errors
+        singleton(tags$head(tags$script(src = "message-handler.js"))),
+        #htmlOutput("sessionInfo"),
+        dataTableOutput("results")
+      )),
+    
+
+    # Other Tabs
+    tabPanel("Instructions for Use",includeMarkdown("doc/instructions.md")),
+    tabPanel("About", includeMarkdown("doc/about.md")),
+    tabPanel("Code", includeMarkdown("doc/code.md")),
+    tabPanel("Contact", includeMarkdown("doc/contact.md"))
+  )
+)))
 
 
-# Column for File Inputs
-#column(4,
-#wellPanel(
-div(style="height: 85px;",fileInput('dataFile', 'Gene Expression Data.', width="75%", accept = c( 'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain', '.csv', '.tsv'))),
-div(style="height: 85px;",fileInput('dataFile2', 'DNA Sequencing Data.', width="75%",accept = c( 'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain', '.csv', '.tsv'))),
-div(style="height: 85px;",fileInput('dataFile3', 'Copy Number Variation Data.', width="75%",accept = c( 'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain', '.csv', '.tsv'))),
-div(style="height: 85px;",fileInput('dataFile4', 'Other Genomic Data.', width="75%",accept = c( 'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain', '.csv', '.tsv'))),
-#p('', style="border:0.1px; border-style:solid; border-color:grey; padding: 0.01em;background:grey"),
-div(style="height: 85px;",fileInput('classFile', 'Sample Class File.', width="75%",accept = c( 'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain', '.csv', '.tsv'))),
-div(style="height: 85px;",fileInput('gmtFile_hallmarks', 'Hallmark Gene Sets  (GMT file).',width="75%", accept = c( 'text/csv','text/comma-separated-values','text/tab-separated-values','text/plain', '.csv', '.tsv'))),
-div(style="height: 85px;",fileInput('gmtFile_user', 'User Gene Set (GMT file).',width="75%", accept = c( 'text/csv','text/comma-separated-values','text/tab-separated-values','text/plain', '.csv', '.tsv'))),
-div(style="height: 85px;",textInput('results_h', value= "GSOA_Demo.txt ", width="75%",label = 'Output File Name')),
-selectInput('Algorithm', label = 'Machine Learning Algorithm.', width="70%", choices = c("svm", "rf")),
-numericInput("Variance", "% Variance to Filter",value=10,  width="70%",min = 1, max = 90),
-numericInput("LowExpression", "% Low Gene Expression to Filter",value=10, width="70%",min = 1, max = 90),
-numericInput("CrossValidation", "# of Cross Validations",value=5, min = 1, width="70%",max = 5),
-numericInput('Iterations', label = 'Number of Iterations.',value=10, min = 1, width="70%",max = 1000),
-h5('Click "Run" after files complete uploading.',style="color:black"),
-actionButton("runButton", "Run"))),
 
-# Outputs
-#verbatimTextOutput("path"),
-#verbatimTextOutput("results")
 
-mainPanel(
-#img(src = "Octocat.png", height = 72, width = 72),
-column(12,
-downloadButton('download', 'Download Results')),  
-br(),
-br(),
-br(),
-dataTableOutput("results")))),
 
-### Other Pages
-# "About" Page
-tabPanel("About",includeMarkdown("doc/about.md")),
 
-# "Instructions" Page
-tabPanel("Instructions for Use", includeMarkdown("doc/instructions.md"),
-column(12, h2('Gene Set Omic Analysis (GSOA)', align= "center"),
-br()) ),
 
-# "Code" Page
-tabPanel("Code", includeMarkdown("doc/code.md")),
+#h5('Please load your data files and specify GSOA parameters. See "Instructions for Use" section for file and parameter details',align= "left"),
+#h5('To run GSOA with', a(href = 'https://drive.google.com/open?id=0B-HGhGW-uF4AODNhMnVHSmUwdHM', 'Demo Files', target="_blank"), 'download all 3 files from drive,', 'and upload.', style="color:black"),
 
-# "Contact" Page
-tabPanel("Contact", includeMarkdown("doc/contact.md")))))
 
-# NOT USING
 
-#, wellPanel(
-#  h5('Click "Run" after uploading files & "Download Data" after run is complete', style="color:black"),
-#  actionButton("runButton", "Run"))),
+
+
+
+
+
+
 
 #column(4, wellPanel(
 #  offset=10,
@@ -89,37 +289,15 @@ tabPanel("Contact", includeMarkdown("doc/contact.md")))))
 
 
 
-# # Column for Parameters
-# column(4, wellPanel (offset=1,
-# 
-# fileInput('classFile', 'Sample Class File.', accept = c( 'text/csv','text/comma-separated-values','text/tab-separated-values', 'text/plain', '.csv', '.tsv')),
-# fileInput('gmtFile', 'Gene Sets (GMT file).', accept = c( 'text/csv','text/comma-separated-values','text/tab-separated-values','text/plain', '.csv', '.tsv')),
-# textInput('resultsFile', value= "GSOA_Demo.txt ", label = 'Output File Name'),
-# selectInput('Algorithm', label = 'Machine Learning Algorithm.', choices = c("svm", "rf")))),
-# 
-# 
-# # Column 2 for Parameters
-# column(4,width = 6,  wellPanel (offset=2,
-# numericInput("Variance", "% Variance to Filter",value=10, min = 1, max = 90),
-# numericInput("LowExpression", "% Low Gene Expression to Filter",value=10, min = 1, max = 90),
-# numericInput("CrossValidation", "# of Cross Validations",value=2, min = 1, max = 5),
-# numericInput('Iterations', label = 'Number of Iterations.',value=2, min = 1, max = 1000))),
-# # Column for Run Button
-
 
 
 #HTML('<style> hr.hasClass{ border-width: 4px; border:0px; height:1.5px; background-color:red;} </style> <hr class="hasClass">'),
 
-#navlistPanel(widths = c(2, 8),
+
 
 #not sure
 #tags$head(tags$style(HTML("#page-nav > li:first-child { display: none; }" ))),
-#allows for message errors
-#singleton(tags$head(tags$script(src = "message-handler.js"))),
 
-
-#selectInput('Voom', label = 'Apply Voom Normalization.', selected= "FALSE", choices = c("TRUE", "FALSE")),
-#numericInput('Cores', label = 'Number of Cores.',value=2, min = 1, max = 4)),
 
 #Demo File Information
 #column(12, ,

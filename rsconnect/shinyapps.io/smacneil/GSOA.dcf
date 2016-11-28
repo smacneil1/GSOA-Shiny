@@ -1,9 +1,11 @@
 name: GSOA
+title:
 account: smacneil
 server: shinyapps.io
 appId: 123033
-bundleId: 593417
+bundleId: 614921
 url: https://smacneil.shinyapps.io/GSOA/
-when: 1477103789.08856
+when: 1479194429.01902
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: GSOA_Report.html|GSOA_Report.Rmd|README.html|README.md|README.Rmd|SendEmail.R|data/c1.symbols.gmt|data/c2.symbols.gmt|data/Gender_classFile.txt|data/Gender_collapsed_symbols.txt|data/h.all.v5.2.symbols.gmt|data/P53_classFile.txt|data/p53_MutantVsWildtype_MicroarrayData_Abbreviated.txt|data/s2.symbols.gmt

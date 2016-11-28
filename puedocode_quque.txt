@@ -1,0 +1,57 @@
+#bash script
+#call with nohup and its always running
+
+nohup Rscript worker.R 
+
+#while loop thats always true 
+{
+
+#look for files in the jobs folder
+for (file in jobs/*)
+
+if (job/* = empty)
+{
+sleep 
+break outta loop
+}
+
+else
+{
+#procress jobs
+#move the job out of the jobs folder into the in progress folder 
+mv 1234_date inprogressF
+
+#make a wrraper R scippt
+
+
+# read in the file that has the paramters into variables 
+# call GSOA
+
+Rscript -vanilla callGSOA.R file1 parm1 >& Output_NameIdentifer.txt 
+
+#stdout
+#stderr 
+
+#separe with email 
+Rscript -vanilla sendMail.R  error_output.txt output.html
+# and send the email
+
+#complete. 
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

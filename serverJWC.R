@@ -13,9 +13,41 @@ library(ggplot2)
 # By default, the file size limit is 5MB. It can be changed by setting this option. Here we'll raise limit to 9MB.
 options(shiny.maxRequestSize = 9*1024^2)
 
-# main server function
-shinyServer(function(input, output, session) {
+# define main main queue object
+Queue <- R6Class("Queue",
+                 public = list(
+                   initialize = function(...) {
+                     for (item in list(...)) {
+                       self$add(item)
+                     }
+                   },
+                   add = function(dataFilePath = input$dataFile$datapath, classFilePath = input$classFile$datapath, gmtFilePath = input$gmtFile_hallmarks$datapath) {
+                     private$queue <- c(private$queue, list(x))
+                     invisible(self)
+                   },
+                   remove = function() {
+                     if (private$length() == 0) return(dataFilePath = input$dataFile$datapath, classFilePath = input$classFile$datapath, gmtFilePath = input$gmtFile_hallmarks$datapath)
+                     # Can use private$queue for explicit access
+                     head <- private$queue[[1]]
+                     private$queue <- private$queue[-1]
+                     head
+                   }
+                 ),
+                 private = list(
+                   queue = list(),
+                   length = function() base::length(private$queue)
+                 )
+)
+shinyServer(function(input, output,session) {
   
+  #check if queue created
+  if (?session.myQueue.exists())
+    session.myQueue <- Queue$new(5,6,"foo") #first que queue
+    myQueue = session.myQueue #first local ojbect
+    session.
+  else
+    myQueue = session.myQueue #set local object (many times)
+  end
   
   onclick("toggleAdvanced", toggle(id = "advanced", anim = TRUE))
   onclick("toggleAdvanced2", toggle(id = "advanced2", anim = TRUE))
@@ -29,10 +61,7 @@ shinyServer(function(input, output, session) {
     reset("inputs")
   })
 
- # what happens when you press run.   
  observeEvent(input$run, {
-  
-  # pop up message dialog boxes if files arn't present
   if (is.null(input$dataFile) && is.null(input$classFile) && is.null(input$gmtFile)) {shinyjs::alert("Missing Data File, Class File, and GMT File")}
   if (is.null(input$dataFile) && is.null(input$classFile) && !is.null(input$gmtFile)) {shinyjs::alert("Missing Data File and Class File")}
   if (is.null(input$dataFile) && !is.null(input$classFile) && is.null(input$gmtFile)) {shinyjs::alert("Missing Data File and GMT File")}
@@ -40,42 +69,34 @@ shinyServer(function(input, output, session) {
   if (is.null(input$dataFile) && !is.null(input$classFile) && !is.null(input$gmtFile)) {shinyjs::alert("Missing Data File")}
   if (!is.null(input$dataFile) && is.null(input$classFile) && !is.null(input$gmtFile)) {shinyjs::alert("Missing Class File")}
   if (!is.null(input$dataFile) && !is.null(input$classFile) && is.null(input$gmtFile)) {shinyjs::alert("Missing GMT File")}
-  if (!is.null(input$dataFile) && !is.null(input$classFile) && !is.null(input$gmtFile)){
-  
-    {shinyjs::alert("GSOA is running. An e-mail with your results will be sent shortly. ")}
-    # create a new folder for uncompleted jobs
-  #  dir_path= paste("~/Documents/PhDProjects/genomicsAPI/GSOA-Shiny/JobsToRun/", "JobName", format(Sys.time(), "%a_%b_%d_%Y_%X"), sep= "_")
-   # dir_path
-  #  dir.create(dir_path)
-    # Save the file to that folder
+  if (!is.null(input$dataFile) && !is.null(input$classFile) && !is.null(input$gmtFile)) {
+    #now here run the queue aff function
+    flag = 1; #basicrun
+    myQueue.add(flag,dataFilePath = input$dataFile$datapath, classFilePath = input$classFile$datapath, gmtFilePath = input$gmtFile_hallmarks$datapath)
     
-    #file.copy(input$dataFile$path, paste(dir_path , "/dataFile.txt", sep=""))
     
-  }
-   
-   
+    
+    #GSOA_h = GSOA_ProcessFiles(dataFilePath = input$dataFile$datapath, classFilePath = input$classFile$datapath, gmtFilePath = input$gmtFile_hallmarks$datapath)
+    }
+   if (){
+     flag = 2: #basicrun + filexxx
+       myQueue.add(flag, ...)
+   }
    })
+ 
+ #begin queue or run next job
+  if(myrunfiles = myQueue.remove()!=null)
+    myruntype = myrunfiles[1]
+    if (myruntype == 1) #run basic
+      GSOA_ProcessFiles(myrunfiles.1,myrunfiles.2,myrunfiles.3)
+    elseif (myrunfiles[1] == 2) #run basic + filexxx
+      GSOA_ProcessFiles(myrunfiles.1,myrunfiles.2,myrunfiles.3,myrufiles.3)
+    endif
+  endif
 })
 
-#GSOA_h = GSOA_ProcessFiles(dataFilePath = input$dataFile$datapath, classFilePath = input$classFile$datapath, gmtFilePath = input$gmtFile_hallmarks$datapath)
-
-
     # if all three are NOT null then run GSOA with hallmarks and with regular
-   
-     
-    
-     
-     
-  
 
-   
-     
-     #make a data frame with variabvles
-     #make another file with the paramters with the 
-    
-  
-      # pop up a message that says "will email results" 
-    # }
 
 
 
